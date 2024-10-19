@@ -1,16 +1,20 @@
 {
   "id": "module",
-  "title": "New Module",
+  "title": "WLED Initiative",
   "description": "",
   "version": "#{VERSION}#",
   "library": "false",
   "manifestPlusVersion": "1.2.0",
   "compatibility": {
-    "minimum": 10,
-    "verified": 10,
-    "maximum": 11
+    "minimum": 12,
+    "verified": 12,
+    "maximum": 12
   },
   "authors": [
+    {
+      "name": "Justin Conabree",
+      "url": "https://github.com/jconabree"
+    },
     {
       "name": "The League of Extraordinary FVTT Developers",
       "url": "https://github.com/League-of-Foundry-Developers",
