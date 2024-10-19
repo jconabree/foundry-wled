@@ -1,7 +1,7 @@
 {
-  "id": "module",
-  "title": "WLED Initiative",
-  "description": "",
+  "id": "foundry-wled",
+  "title": "WLED Integration",
+  "description": "This module integrates Foundry VTT with WLED for controlling real world LEDs",
   "version": "#{VERSION}#",
   "library": "false",
   "manifestPlusVersion": "1.2.0",
@@ -14,11 +14,6 @@
     {
       "name": "Justin Conabree",
       "url": "https://github.com/jconabree"
-    },
-    {
-      "name": "The League of Extraordinary FVTT Developers",
-      "url": "https://github.com/League-of-Foundry-Developers",
-      "discord": "discordID#0001"
     }
   ],
   "relationships": {
@@ -49,7 +44,7 @@
   "media": [
     {
       "type": "icon",
-      "url": "https://avatars2.githubusercontent.com/u/71292812?s=400&u=ccdb4eeb7abf551ca8f314e5a9bfd0479a4d3d41&v=4"
+      "url": "https://raw.githubusercontent.com/jconabree/foundry-wled/refs/heads/main/icons/logo.png"
     }
   ]
 }
