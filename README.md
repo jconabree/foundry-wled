@@ -9,13 +9,14 @@ This module integrates Foundry VTT with WLED to control real-world LEDs.
 ## Roadmap
 - Future Release
   - Control general (segment 0) effects
+  - Option to disable using WLED freeze/unfreeze
+  - Typescript
 
 ## Changelog
 - 1.0.0
   - General configuration
     - WLED IP address
     - DM segment configuration
-    - Option to use `freeze`/`unfreeze` when toggling the segments (default: true)
-  - Support for Initiative
+  - Support for Encounter
     - Highlighting the active player
     - Display character health

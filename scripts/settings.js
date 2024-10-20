@@ -28,9 +28,9 @@ class FWISettings {
      */
     init() {
         this.registerSetting(
-            'enable-initiative',
+            'enable-encounter',
             {
-                name: 'Enable Auto Initiative',
+                name: 'Enable Auto Encounter',
                 scope: 'world',
                 config: true,
                 type: Boolean,
@@ -49,17 +49,17 @@ class FWISettings {
             }
         );
 
-        this.registerSetting(
-            'use-freeze',
-            {
-                name: 'Use Freeze/Unfreeze',
-                hint: 'WLED will sometimes leave gaps in segment 0 when unfrozen segments are off',
-                scope: 'world',
-                config: true,
-                type: Boolean,
-                default: true
-            }
-        );
+        // this.registerSetting(
+        //     'use-freeze',
+        //     {
+        //         name: 'Use Freeze/Unfreeze',
+        //         hint: 'WLED will sometimes leave gaps in segment 0 when unfrozen segments are off',
+        //         scope: 'world',
+        //         config: true,
+        //         type: Boolean,
+        //         default: true
+        //     }
+        // );
 
         this.registerSetting(
             'gm-start',

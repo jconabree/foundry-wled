@@ -80,8 +80,6 @@ class FWIActor {
             const summonedActor = game.actors.find((a) => a.id === token.actorId);
 
             this.setValue(summonedActor, 'parentActorId', summonData.parent.parent.parent.id);
-
-            console.log(summonedActor);
         });
     }
 
@@ -136,7 +134,7 @@ class FWIActor {
                 isGM = true;
             }
 
-            if (!startLed || !stopLed) {
+            if ((!startLed && startLed !== 0) || (!stopLed && stopLed !== 0)) {
                 return;
             }
         }
@@ -146,7 +144,7 @@ class FWIActor {
 
         return {
             name: segmentActor.name,
-            actorType: segmentActor.type,
+            actorType: actor.type,
             startLed,
             stopLed,
             healthPercent,
@@ -155,6 +153,10 @@ class FWIActor {
     }
 
     onUpdate(actor, updated) {
+        if (!settings.getValue('enable-encounter')) {
+            return;
+        }
+
         if (!game.combat?.isActive) {
             return;
         }

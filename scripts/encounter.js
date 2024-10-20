@@ -1,7 +1,8 @@
 import actor from './actor.js';
+import settings from './settings.js';
 import wled from './wled.js';
 
-class FWIInitiative {
+class FWIEncounter {
     init() {
         if (!game.user.isGM) {
             return;
@@ -12,6 +13,10 @@ class FWIInitiative {
         })
 
         Hooks.on('combatTurn', (combat, update) => {
+            this.onCombatUpdate(combat, update?.turn || 0);
+        })
+        
+        Hooks.on('combatRound', (combat, update) => {
             this.onCombatUpdate(combat, update?.turn || 0);
         })
 
@@ -41,12 +46,14 @@ class FWIInitiative {
             }
         })
         .filter(Boolean)
-        .reduce((unique, segment) => {
+        .reduce((unique, segment, index) => {
             const existingIndex = unique.findIndex(({ name }) => name === segment.name);
             if (existingIndex === -1) {
                 unique.push(segment);
-            } else if (segment.actorType === 'character') {
+            } else if (segment.actorType === 'character' && !unique[existingIndex].isActive) {
                 unique[existingIndex] = segment;
+            } else {
+                unique[existingIndex].isActive = segment.isActive || unique[existingIndex].isActive;
             }
 
             return unique;
@@ -54,16 +61,15 @@ class FWIInitiative {
     }
 
     onCombatUpdate(combat, turn) {
-        console.log('combat updated', combat);
+        if (!settings.getValue('enable-encounter')) {
+            return;
+        }
+
         if (!combat.active || !combat.turns.length) {
             return;
         }
 
-        console.log(turn);
-
         const actorSegments = this.getCombatSegments(combat, turn);
-
-        console.log(actorSegments);
 
         if (!actorSegments.length) {
             return;
@@ -73,10 +79,11 @@ class FWIInitiative {
     }
 
     onCombatDelete(combat) {
-        console.log('combat deleted', combat);
-        const actorSegments = this.getCombatSegments(combat);
+        if (!settings.getValue('enable-encounter')) {
+            return;
+        }
 
-        console.log(actorSegments);
+        const actorSegments = this.getCombatSegments(combat);
 
         if (!actorSegments.length) {
             return;
@@ -88,4 +95,4 @@ class FWIInitiative {
     }
 }
 
-export default new FWIInitiative();
+export default new FWIEncounter();
