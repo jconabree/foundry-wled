@@ -104,7 +104,7 @@ class FWIActor {
             return;
         }
         
-        if (actor.flags.dnd5e.summonedCopy) {
+        if (actor.flags.dnd5e?.summonedCopy) {
             const parentActorId = this.getValue(actor, 'parentActorId');
 
             // Summoned but no attachment
