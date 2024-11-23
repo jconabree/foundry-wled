@@ -1,0 +1,13 @@
+# Changelog
+- 1.0.2
+  - Moving changelog to separate file
+- 1.0.1
+  - Fixing issue with GM-only actors breaking encounter lights
+  - Updating system requirement in module.json
+- 1.0.0
+  - General configuration
+    - WLED IP address
+    - DM segment configuration
+  - Support for Encounter
+    - Highlighting the active player
+    - Display character health
