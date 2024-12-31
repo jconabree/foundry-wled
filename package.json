@@ -1,0 +1,31 @@
+{
+  "name": "foundry-wled",
+  "version": "1.0.0",
+  "description": "This module integrates Foundry VTT with WLED for controlling real world LEDs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jconabree/foundry-wled.git"
+  },
+  "keywords": [
+    "Foundry VTT",
+    "WLED"
+  ],
+  "author": "Justin Conabree",
+  "license": "SEE LICENSE",
+  "bugs": {
+    "url": "https://github.com/jconabree/foundry-wled/issues"
+  },
+  "homepage": "https://github.com/jconabree/foundry-wled#readme",
+  "main": "dist/module.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:all": "npm run build:scripts && npm run build:styles && npm run build:languages",
+    "build:scripts": "tsc",
+    "build:styles": "cp src/styles dist/",
+    "build:languages": "cp src/languages dist/"
+  },
+  "devDependencies": {
+    "fvtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#main",
+    "typescript": "^5.7.2"
+  }
+}

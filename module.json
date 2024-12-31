@@ -30,19 +30,16 @@
     "requires": []
   },
   "esmodules": [
-    "scripts/module.js"
-  ],
-  "scripts": [
-    "scripts/lib/lib.js"
+    "dist/module.js"
   ],
   "styles": [
-    "styles/module.css"
+    "dist/module.css"
   ],
   "languages": [
     {
       "lang": "en",
       "name": "English",
-      "path": "languages/en.json"
+      "path": "dist/languages/en.json"
     }
   ],
   "url": "#{URL}#",

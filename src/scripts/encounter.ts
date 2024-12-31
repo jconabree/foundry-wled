@@ -1,10 +1,10 @@
-import actor from './actor.js';
-import settings from './settings.js';
-import wled from './wled.js';
+import actor from './actor';
+import settings from './settings';
+import wled from './wled';
 
 class FWIEncounter {
     init() {
-        if (!game.user.isGM) {
+        if (!(game instanceof Game) || !game.user?.isGM) {
             return;
         }
 
@@ -20,19 +20,23 @@ class FWIEncounter {
             this.onCombatUpdate(combat, update?.turn || 0);
         })
 
-        Hooks.on('deleteCombat', (combat) => {
+        Hooks.on('deleteCombat', (combat: Combat) => {
             this.onCombatDelete(combat);
         })
     }
 
-    getCombatSegments(combat, turnNumber) {
+    getCombatSegments(combat: Combat, turnNumber?: number): CombatSegment[]|undefined {
         if (!combat.turns.length) {
             return;
         }
 
-        return combat.turns.map((turn, index) => {
+        return (combat.turns.map((turn, index): CombatSegment|undefined => {
             const isActive = combat.active && index === turnNumber;
-            const combatActor = game.actors.find((a) => a.id === turn.actorId);
+            const combatActor = game.actors?.find((a) => a.id === turn.actorId) as Actor|undefined;
+
+            if (!combatActor) {
+                return;
+            }
         
             const actorSegment = actor.getActorSegment(combatActor);
 
@@ -45,8 +49,8 @@ class FWIEncounter {
                 isActive
             }
         })
-        .filter(Boolean)
-        .reduce((unique, segment, index) => {
+        .filter(Boolean) as CombatSegment[])
+        .reduce((unique: CombatSegment[], segment: CombatSegment) => {
             const existingIndex = unique.findIndex(({ name }) => name === segment.name);
             if (existingIndex === -1) {
                 unique.push(segment);
@@ -60,7 +64,7 @@ class FWIEncounter {
         }, []);
     }
 
-    onCombatUpdate(combat, turn) {
+    onCombatUpdate(combat: Combat, turn: number) {
         if (!settings.getValue('enable-encounter')) {
             return;
         }
@@ -71,21 +75,21 @@ class FWIEncounter {
 
         const actorSegments = this.getCombatSegments(combat, turn);
 
-        if (!actorSegments.length) {
+        if (!actorSegments?.length) {
             return;
         }
         
         wled.updateSegments(actorSegments);
     }
 
-    onCombatDelete(combat) {
+    onCombatDelete(combat: Combat) {
         if (!settings.getValue('enable-encounter')) {
             return;
         }
 
         const actorSegments = this.getCombatSegments(combat);
 
-        if (!actorSegments.length) {
+        if (!actorSegments?.length) {
             return;
         }
         

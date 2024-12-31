@@ -1,6 +1,6 @@
-import settings from './settings.js';
-import actor from './actor.js';
-import encounter from './encounter.js';
+import settings from './settings';
+import actor from './actor';
+import encounter from './encounter';
 
 Hooks.once('init', async function() {
     settings.init();

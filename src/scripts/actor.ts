@@ -11,32 +11,52 @@ class FWIActor {
     }
 
     initSheet() {
-        const pcSheetNames = Object.values(CONFIG.Actor.sheetClasses.character)
+        const allCharacterSheets: {
+            cls: typeof DocumentSheet
+        // @ts-ignore
+        }[] = Object.values(CONFIG.Actor.sheetClasses.character)
+        const pcSheetNames = allCharacterSheets
             .map((sheetClass) => sheetClass.cls)
             .map((sheet) => sheet.name);
 
         pcSheetNames.forEach((sheetName) => {
-            Hooks.on(`get${sheetName}HeaderButtons`, (app, buttons) => {
-                if (buttons.find(({ label }) => label === 'WLED Configurations')) {
-                    return buttons;
-                }
-
-                return buttons.splice(
-                    buttons.findIndex(({ label }) => label === 'Sheet'),
-                    0,
-                    {
-                        label: 'WLED Configurations',
-                        class: 'wled-config',
-                        icon: 'fas fa-traffic-light',
-                        onclick: this.getConfigButtonClick(app.object)
+            Hooks.on(
+                `get${sheetName}HeaderButtons`,
+                (
+                    app: FormApplication<FormApplicationOptions, Actor>,
+                    buttons: {
+                        label: string;
+                        class: string;
+                        icon: string;
+                        onclick: (param: unknown) => void;
+                    }[]
+                ) => {
+                    if (buttons.find(({ label }) => label === 'WLED Configurations')) {
+                        return buttons;
                     }
-                )
-            });
+
+                    return buttons.splice(
+                        buttons.findIndex(({ label }) => label === 'Sheet'),
+                        0,
+                        {
+                            label: 'WLED Configurations',
+                            class: 'wled-config',
+                            icon: 'fas fa-traffic-light',
+                            onclick: this.getConfigButtonClick(app.object)
+                        }
+                    )
+                }
+            );
         });
     }
 
-    getConfigButtonClick(actor) {
-        return (...clickData) => {
+    getConfigButtonClick(actor: Actor) {
+        type WLEDActorFormValues = {
+            start: string|number;
+            stop: string|number;
+        };
+
+        return () => {
             new foundry.applications.api.DialogV2({
                 window: { title: `${actor.name} WLED Configuration` },
                 content: `
@@ -62,36 +82,57 @@ class FWIActor {
                 buttons: [{
                     action: 'submit',
                     label: 'Save',
-                    callback: (event, button, dialog) => ({
-                        start: button.form.elements['wled-actor-start'].value,
-                        stop: button.form.elements['wled-actor-stop'].value,
+                    callback: (event, button, dialog): Promise<WLEDActorFormValues> => Promise.resolve({
+                        start: (button.form!.querySelector('[name="wled-actor-start"]') as HTMLInputElement).value,
+                        stop: (button.form!.querySelector('[name="wled-actor-stop"]') as HTMLInputElement).value,
                     })
                 }],
-                submit: (result) => {
+                submit: async (result: WLEDActorFormValues) => {
                     this.setValue(actor, 'startLed', result.start);
                     this.setValue(actor, 'stopLed', result.stop);
                 }
+            // @ts-ignore
             }).render({ force: true });
         }
     }
 
     initSummonInfo() {
-        Hooks.on('dnd5e.postSummon', (summonData, _, [token]) => {
-            const summonedActor = game.actors.find((a) => a.id === token.actorId);
+        Hooks.on(
+            'dnd5e.postSummon',
+            (
+                summonData: {
+                    parent: {
+                        parent: {
+                            parent: {
+                                id: string;
+                            }
+                        }
+                    }
+                },
+                _: any,
+                [token]: TokenDocument[]
+            ) => {
+            const summonedActor = game.actors?.find((a) => a.id === token.actorId);
 
+            if (!summonedActor) {
+                return;
+            }
+
+            // Big assumption here
             this.setValue(summonedActor, 'parentActorId', summonData.parent.parent.parent.id);
         });
     }
 
-    initCombat() {        
-        Hooks.on('updateActor', (actor, updated) => {
+    initCombat() {
+        Hooks.on('updateActor', (actor: Actor, updated: { [key: string]: unknown }) => {
             this.onUpdate(actor, updated);
         });
     }
 
-    getActorSegment(actor) {
-        let segmentActor = actor;
+    getActorSegment(actor: Actor): ActorSegment|undefined {
+        let segmentActor: Actor|undefined = actor;
 
+        // @ts-ignore
         const hp = actor.system?.attributes?.hp;
 
         if (!hp) {
@@ -104,6 +145,7 @@ class FWIActor {
             return;
         }
         
+        // @ts-ignore
         if (actor.flags.dnd5e?.summonedCopy) {
             const parentActorId = this.getValue(actor, 'parentActorId');
 
@@ -114,7 +156,15 @@ class FWIActor {
                 return;
             }
 
-            segmentActor = game.actors.find(a => a.id === parentActorId);
+            const parentActor = game.actors?.find(a => a.id === parentActorId) as Actor|undefined;
+
+            if (!parentActor) {
+                console.warn('Summoned creature parent actor not found');
+
+                return;
+            }
+
+            segmentActor = parentActor;
         }
 
         let startLed = this.getValue(segmentActor, 'startLed');
@@ -123,10 +173,11 @@ class FWIActor {
 
         if (!startLed || !stopLed) {
             const nonPlayerUsers = game.users
-                    .filter(({ name }) => ['Gamemaster', 'Table'].includes(name))
-                    .map(({ _id }) => _id);
+                    // @ts-ignore
+                    ?.filter(({ name }) => ['Gamemaster', 'Table'].includes(name))
+                    ?.map(({ _id }) => _id);
             const hasNonGmOwner = Object.entries(segmentActor.ownership)
-                .some(([uuid, level]) => level === 3 && !nonPlayerUsers.includes(uuid));
+                .some(([uuid, level]) => level === 3 && !nonPlayerUsers?.includes(uuid));
             
             if (!hasNonGmOwner) {
                 startLed = settings.getValue('gm-start');
@@ -152,7 +203,7 @@ class FWIActor {
         };
     }
 
-    onUpdate(actor, updated) {
+    onUpdate(actor: Actor, updated: { [key: string]: unknown}) {
         if (!settings.getValue('enable-encounter')) {
             return;
         }
@@ -161,6 +212,7 @@ class FWIActor {
             return;
         }
 
+        // @ts-ignore
         if (typeof updated?.system?.attributes?.hp === 'undefined') {
             return;
         }
@@ -173,7 +225,7 @@ class FWIActor {
         wled.updateSegment(actorSegment)
     }
 
-    setValue(entity, key, value) {
+    setValue(entity: Actor, key: string, value: unknown) {
         if (typeof value === 'undefined') {
             return entity.unsetFlag(this.#flagKey, key);
         }

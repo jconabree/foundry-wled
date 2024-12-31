@@ -1,13 +1,13 @@
-import settings from './settings.js';
+import settings from './settings';
 
 class FWIWled {
     #cache = null;
     #iniLength = 1;
 
-    _getActorMainSegmentKey(actorName) {
+    _getActorMainSegmentKey(actorName: string) {
         return actorName.toLowerCase().split(' ')[0].replace(/[^a-z1-9]/g, '');
     }
-    _getActorSegmentKeys(actorName) {
+    _getActorSegmentKeys(actorName: string) {
         const mainSegment = this._getActorMainSegmentKey(actorName);
 
         return [
@@ -17,15 +17,15 @@ class FWIWled {
         ];
     }
 
-    _isPre(key) {
+    _isPre(key: string) {
         return /-pre$/.test(key);
     }
 
-    _isPost(key) {
+    _isPost(key: string) {
         return /-post$/.test(key);
     }
 
-    _getHealthColor(healthPercent) {
+    _getHealthColor(healthPercent: number) {
         if (healthPercent < 0 || healthPercent > 100) {
             throw new Error('Percentage must be between 0 and 100.')
         }
@@ -36,7 +36,7 @@ class FWIWled {
         return [red, green, 5];
     }
 
-    _getGMColor(isActive) {
+    _getGMColor(isActive: boolean) {
         if (typeof isActive === 'undefined' || isActive) {
             return [255, 255, 255];
         }
@@ -100,20 +100,7 @@ class FWIWled {
         );
     }
 
-    /**
-     * 
-     * @param {Object} segmentData 
-     * @param {string} segmentData.name
-     * @param {number} segmentData.startLed
-     * @param {number} segmentData.stopLed
-     * @param {boolean} segmentData.isActive
-     * @param {boolean} [segmentData.isGM]
-     * @param {number} [segmentData.healthPercent]
-     * @param {boolean} [segmentData.isOn]
-     * @param {boolean} [batch]
-     * @return {Array<Object>}
-     */
-    async updateSegment(segmentData, batch) {
+    async updateSegment(segmentData: WLEDSegment, isBatch?: boolean) {
         const {
             name,
             startLed,
@@ -162,7 +149,7 @@ class FWIWled {
             }
         }).filter(Boolean);
 
-        if (batch) {
+        if (isBatch) {
             return segments;
         }
 
@@ -315,7 +302,7 @@ class FWIWled {
         ]
     }
 
-    async getSegments() {
+    async getSegments(): Promise<RawWLEDSegment> {
         if (!this.#cache) {
             const data = await this._query('state');
             const segments = data.seg;
