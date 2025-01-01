@@ -30,10 +30,10 @@
     "requires": []
   },
   "esmodules": [
-    "dist/module.js"
+    "dist/scripts/module.js"
   ],
   "styles": [
-    "dist/module.css"
+    "dist/styles/module.css"
   ],
   "languages": [
     {
