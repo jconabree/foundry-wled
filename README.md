@@ -1,4 +1,5 @@
-![](https://img.shields.io/badge/Foundry-v12-informational)
+![](https://img.shields.io/badge/Foundry-v13-informational)
+![](https://img.shields.io/badge/Foundry-v14-informational)
 ![Latest Release Download Count](https://img.shields.io/github/downloads/jconabree/foundry-wled/module.zip)
 
 

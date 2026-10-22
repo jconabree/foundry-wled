@@ -1,4 +1,7 @@
 # Changelog
+- Unreleased
+  - Raising minimum Foundry version to v13 (verified v14)
+  - Updating dnd5e compatibility to 5.3.3+ (verified 6.0.6)
 - 1.0.2
   - Moving changelog to separate file
 - 1.0.1
