@@ -2,7 +2,7 @@
 
 ## What this is
 
-Foundry VTT module (`id: foundry-wled`) that drives a real-world WLED LED strip from play: combat start, turn, round and end set segment lighting, and an actor's HP changes recolour its segment. Plain ES modules, no build, no package manifest, no tests. Targets Foundry v13 minimum / v14 verified and dnd5e 5.3.3+ / 6.x (D9 in the design spec). The manifest dnd5e relationship may lag this until the manifest-alignment commit lands; the target stated here is the rule.
+Foundry VTT module (`id: foundry-wled`) that drives a real-world WLED LED strip from play: combat start, turn, round and end set segment lighting, and an actor's HP changes recolour its segment. Plain ES modules, no build, no package manifest, no tests. Targets Foundry v13 minimum / v14 verified and dnd5e 5.3.3+ / 6.x (D9 in the design spec).
 
 ## Commands
 
@@ -74,7 +74,7 @@ Manual in Foundry (list them for the user; unverified until the user confirms):
 
 - Release workflow `.github/workflows/main.yml` zips language/ and lang/ (both nonexistent), but the folder is `languages/`. The released zip omits translations (known issue, spec follow-up).
 - `module.json` is a manifest-plus template: keep `#{VERSION}#`, `#{URL}#`, `#{MANIFEST}#`, `#{DOWNLOAD}#`.
-- `module.json` `library` is currently the string `"false"`; it must be boolean `false`.
+- `module.json` `library` must be boolean `false`, not a string.
 - `getSegments` caches the WLED state; the cache clears only after a non-GET `_query`. Changes made on the device directly are not seen until then.
 - `scripts/wled.js` assumes segment 0 exists and builds a default segment 0 with `stop: 120` if the device returns none.
 - LED indices are stored in flags as strings from the dialog and parsed with `Number.parseInt` in `getActorSegment`.
