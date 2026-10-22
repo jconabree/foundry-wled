@@ -7,8 +7,8 @@
   "manifestPlusVersion": "1.2.0",
   "compatibility": {
     "minimum": 12,
-    "verified": 12,
-    "maximum": 12
+    "verified": 14,
+    "maximum": 14
   },
   "authors": [
     {
@@ -21,9 +21,9 @@
       {
         "id": "dnd5e",
         "type": "system",
-        "manifest": "https://raw.githubusercontent.com/foundryvtt/dnd5e/refs/tags/release-4.1.1/system.json",
+        "manifest": "https://raw.githubusercontent.com/foundryvtt/dnd5e/refs/tags/release-4.3.3/system.json",
         "compatibility": {
-          "verified": "4.1.1"
+          "verified": "4.3.3"
         }
       }
     ],
