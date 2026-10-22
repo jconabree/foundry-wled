@@ -6,9 +6,13 @@ import js from '@eslint/js';
 import globals from 'globals';
 import eslintComments from '@eslint-community/eslint-plugin-eslint-comments';
 
+// Every JS/MJS/CJS file in the repo is linted (ignores below exclude dist/ and node_modules/).
+// scripts/**/*.js is browser + Foundry code; every other JS file is Node tooling.
 const JS_FILES = ['scripts/**/*.js'];
 const TS_FILES = ['src/**/*.ts'];
-const MJS_FILES = ['*.mjs'];
+const NODE_ESM_FILES = ['**/*.mjs', '**/*.js'];
+const NODE_CJS_FILES = ['**/*.cjs'];
+const NODE_FILES = [...NODE_ESM_FILES, ...NODE_CJS_FILES];
 
 // TypeScript rules are enabled only when a tsconfig.json sits next to this config.
 // typescript-eslint is imported lazily so JS-only repos do not need it installed.
@@ -120,7 +124,7 @@ const config = [
     { linterOptions: { reportUnusedDisableDirectives: 'error' } },
     {
         ...js.configs.recommended,
-        files: [...JS_FILES, ...MJS_FILES],
+        files: ['**/*.js', '**/*.mjs', '**/*.cjs'],
     },
     {
         files: JS_FILES,
@@ -132,10 +136,20 @@ const config = [
         rules: { 'no-unused-vars': 'error' },
     },
     {
-        files: MJS_FILES,
+        files: NODE_ESM_FILES,
+        ignores: JS_FILES,
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'module',
+            globals: { ...globals.node },
+        },
+        rules: { 'no-unused-vars': 'error' },
+    },
+    {
+        files: NODE_CJS_FILES,
+        languageOptions: {
+            ecmaVersion: 'latest',
+            sourceType: 'commonjs',
             globals: { ...globals.node },
         },
         rules: { 'no-unused-vars': 'error' },
@@ -167,7 +181,7 @@ if (hasTypeScript) {
 }
 
 config.push({
-    files: [...JS_FILES, ...(hasTypeScript ? TS_FILES : []), ...MJS_FILES],
+    files: [...NODE_FILES, ...(hasTypeScript ? TS_FILES : [])],
     plugins: { '@eslint-community/eslint-comments': eslintComments },
     rules: sharedRules,
 });

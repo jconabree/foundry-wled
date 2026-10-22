@@ -9,7 +9,7 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
-  # npm (dev dependencies only)
+  # npm. Dev dependencies are grouped into one PR; fvtt-types bumps are ask-first (see CLAUDE.md).
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
@@ -17,3 +17,5 @@ updates:
     groups:
       dev-dependencies:
         dependency-type: 'development'
+    ignore:
+      - dependency-name: '@league-of-foundry-developers/fvtt-types'
