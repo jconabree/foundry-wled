@@ -6,7 +6,7 @@ paths:
   - "README.md"
   - ".github/**"
 ---
-<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Staging copy: foundry14/shared-claude/. Change all copies together. -->
+<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Change all copies together. -->
 # Release and manifest rules
 
 - Keep the tokens `#{VERSION}#`, `#{URL}#`, `#{MANIFEST}#`, `#{DOWNLOAD}#` in `module.json`. Never hard-code a version or URL in their place.

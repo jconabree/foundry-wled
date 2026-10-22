@@ -1,15 +1,18 @@
 # foundry-wled
 
+Shared standards live in `.claude/rules/` (loaded automatically); this file covers only what is specific to this package.
+
 ## What this is
 
-Foundry VTT module (`id: foundry-wled`) that drives a real-world WLED LED strip from play: combat start, turn, round and end set segment lighting, and an actor's HP changes recolour its segment. Plain ES modules, no build, no package manifest, no tests. Targets Foundry v13 minimum / v14 verified and dnd5e 5.3.3+ / 6.x (D9 in the design spec).
+Foundry VTT module (`id: foundry-wled`) that drives a real-world WLED LED strip from play: combat start, turn, round and end set segment lighting, and an actor's HP changes recolour its segment. Plain ES modules, no build, no package manifest, no tests. Targets Foundry v13 minimum / v14 verified and dnd5e 5.3.3+ / 6.x (dnd5e 6.x behaviour is partly unverified; see Foundry integration).
 
 ## Commands
 
-No build and no npm. Static check is JSON validity only:
+No build and no npm. Static checks only (JSON validity and syntax):
 
-- `python3 -m json.tool module.json > /dev/null`
-- `python3 -m json.tool languages/en.json > /dev/null`
+- `node -e "JSON.parse(require('fs').readFileSync('module.json','utf8'))"`
+- `node -e "JSON.parse(require('fs').readFileSync('languages/en.json','utf8'))"`
+- `for f in scripts/*.js scripts/lib/*.js; do node --check "$f" || exit 1; done`
 - `git diff --stat` before committing
 
 ## Layout
@@ -32,7 +35,7 @@ No build and no npm. Static check is JSON validity only:
 - Network: `fetch` to `<uri>/json/state` in `FWIWled._query`. The only endpoint is the user-configured `uri` setting.
 - UI: a `DialogV2` per actor for start/end LED, opened from a sheet header button.
 - WLED segments are matched by name. Names derive from the actor: first word of the name, lowercased, non `[a-z1-9]` stripped, plus `-pre` and `-post`. The GM area uses segment `dm`. Two actors sharing a first word share a segment.
-- dnd5e: `actor.system.attributes.hp` (`value`, `max`) is read directly. `dnd5e.postSummon` and `flags.dnd5e.summonedCopy` are unverified against dnd5e 6.x (spec follow-up). Do not assume they work on 6.x; feature-detect, and check the dnd5e source or release notes before relying on them.
+- dnd5e: `actor.system.attributes.hp` (`value`, `max`) is read directly. `dnd5e.postSummon` and `flags.dnd5e.summonedCopy` are unverified against dnd5e 6.x (known issue, not yet fixed). Do not assume they work on 6.x; feature-detect, and check the dnd5e source or release notes before relying on them.
 - Combat triggers are GM-client only. Actor HP updates (`updateActor`) fire on every client, so any client can push to WLED. Keep this in mind before adding socket or multi-client logic.
 
 ## Known legacy patterns
@@ -54,10 +57,9 @@ Per the strict upgrade rule, fix these in a separate preceding commit before cha
 
 Static (report actual output):
 
-1. `python3 -m json.tool module.json > /dev/null` and `python3 -m json.tool languages/en.json > /dev/null`
-2. `node --check scripts/*.js` and `node --check scripts/lib/*.js`
-3. From the parent `foundry14` folder: `tools/check-guidance.sh foundry-wled`
-4. `git status --porcelain` shows only intended files.
+1. The two `node -e` JSON parse commands above (`module.json`, `languages/en.json`) both exit 0.
+2. `for f in scripts/*.js scripts/lib/*.js; do node --check "$f" || exit 1; done`
+3. `git status --porcelain` shows only intended files.
 
 Manual in Foundry (list them for the user; unverified until the user confirms):
 
@@ -72,7 +74,7 @@ Manual in Foundry (list them for the user; unverified until the user confirms):
 
 ## Gotchas
 
-- Release workflow `.github/workflows/main.yml` zips language/ and lang/ (both nonexistent), but the folder is `languages/`. The released zip omits translations (known issue, spec follow-up).
+- Release workflow `.github/workflows/main.yml` zips language/ and lang/ (both nonexistent), but the folder is `languages/`. The released zip omits translations (known issue, not yet fixed).
 - `module.json` is a manifest-plus template: keep `#{VERSION}#`, `#{URL}#`, `#{MANIFEST}#`, `#{DOWNLOAD}#`.
 - `module.json` `library` must be boolean `false`, not a string.
 - `getSegments` caches the WLED state; the cache clears only after a non-GET `_query`. Changes made on the device directly are not seen until then.

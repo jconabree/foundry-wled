@@ -6,8 +6,9 @@
       "Bash(git status*)",
       "Bash(git diff*)",
       "Bash(git log*)",
-      "Bash(git branch*)",
-      "Bash(git switch *)",
+      "Bash(git branch --show-current)",
+      "Bash(git branch --list*)",
+      "Bash(git switch -c *)",
       "Bash(git checkout -b *)",
       "Bash(git add *)",
       "Bash(git commit *)"

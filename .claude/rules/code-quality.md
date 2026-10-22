@@ -1,4 +1,4 @@
-<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Staging copy: foundry14/shared-claude/. Change all copies together. -->
+<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Change all copies together. -->
 # Code quality rules
 
 - Modern ESM: `const`/`let` (no `var`), `import`/`export`, `#private` class fields.

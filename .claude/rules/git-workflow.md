@@ -1,4 +1,4 @@
-<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Staging copy: foundry14/shared-claude/. Change all copies together. -->
+<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Change all copies together. -->
 # Git workflow rules
 
 - One branch per change: `feat/<topic>`, `fix/<topic>`, `chore/<topic>`.

@@ -1,8 +1,8 @@
-<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Staging copy: foundry14/shared-claude/. Change all copies together. -->
+<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Change all copies together. -->
 # Foundry API rules
 
 - Target: minimum v13, verified v14. Use v13+ APIs only; no v12 shims or fallbacks.
-- No deprecated globals (e.g. bare `renderTemplate`, `TextEditor`). Use the namespaced forms: `foundry.applications.handlebars.*` (`renderTemplate`, `loadTemplates`), `foundry.applications.ux.TextEditor`, `foundry.utils.*`.
+- No deprecated globals (e.g. bare `renderTemplate`, `TextEditor`). Use the namespaced forms: `foundry.applications.handlebars.*` (`renderTemplate`, `loadTemplates`), `foundry.applications.ux.TextEditor.implementation`, `foundry.utils.*`.
 - Core removes deprecated globals in future majors. Before using any global, check the v14 API docs at foundryvtt.com/api/v14/ for its namespaced replacement.
 - UI: `ApplicationV2` with `HandlebarsApplicationMixin`; `DocumentSheetV2` for document sheets; `DialogV2` for dialogs.
 - Never use `Application`, `FormApplication`, `DocumentSheet`, or `Dialog` (ApplicationV1, deprecated since v13).

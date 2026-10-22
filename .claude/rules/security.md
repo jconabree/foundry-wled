@@ -1,9 +1,10 @@
-<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Staging copy: foundry14/shared-claude/. Change all copies together. -->
+<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Change all copies together. -->
 # Security rules
 
 - Never write user, document, or setting data through `innerHTML`, `insertAdjacentHTML`, or `outerHTML`.
 - Render untrusted text with `textContent`, DOM construction (`createElement`), or Handlebars `{{ }}`.
-- Render rich text with `foundry.applications.ux.TextEditor.enrichHTML` and `secrets: doc.isOwner`.
+- Render rich text with `foundry.applications.ux.TextEditor.implementation.enrichHTML` and `secrets: doc.isOwner`.
+- The same applies to any API that takes an HTML string (`DialogV2` `content`, `ChatMessage` `content`, `Handlebars.SafeString`): escape or build DOM; never interpolate untrusted values.
 - `foundry.utils.cleanHTML` is not a full XSS sanitizer. Never treat its output as safe.
 - Use `{{{ }}}` only for enriched or trusted HTML, with an adjacent comment stating why it is safe.
 - Check permissions with `doc.canUserModify(user, action)` or `doc.testUserPermission(user, level)`. Do not rely only on `game.user.isGM`.
