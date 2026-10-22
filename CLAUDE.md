@@ -74,7 +74,7 @@ Manual in Foundry (list them for the user; unverified until the user confirms):
 
 ## Gotchas
 
-- Release workflow `.github/workflows/main.yml` zips language/ and lang/ (both nonexistent), but the folder is `languages/`. The released zip omits translations (known issue, not yet fixed).
+- The release workflow's `zip` step lists folders explicitly, and its "Verify Archive Contents" step fails the release if a path referenced by `module.json` is missing. Add any new top-level folder to the `zip` step.
 - `module.json` is a manifest-plus template: keep `#{VERSION}#`, `#{URL}#`, `#{MANIFEST}#`, `#{DOWNLOAD}#`.
 - `module.json` `library` must be boolean `false`, not a string.
 - `getSegments` caches the WLED state; the cache clears only after a non-GET `_query`. Changes made on the device directly are not seen until then.
