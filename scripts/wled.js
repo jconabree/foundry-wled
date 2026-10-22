@@ -5,16 +5,15 @@ class FWIWled {
     #iniLength = 1;
 
     _getActorMainSegmentKey(actorName) {
-        return actorName.toLowerCase().split(' ')[0].replace(/[^a-z1-9]/g, '');
+        return actorName
+            .toLowerCase()
+            .split(' ')[0]
+            .replace(/[^a-z1-9]/g, '');
     }
     _getActorSegmentKeys(actorName) {
         const mainSegment = this._getActorMainSegmentKey(actorName);
 
-        return [
-            mainSegment,
-            `${mainSegment}-pre`,
-            `${mainSegment}-post`
-        ];
+        return [mainSegment, `${mainSegment}-pre`, `${mainSegment}-post`];
     }
 
     _isPre(key) {
@@ -27,12 +26,12 @@ class FWIWled {
 
     _getHealthColor(healthPercent) {
         if (healthPercent < 0 || healthPercent > 100) {
-            throw new Error('Percentage must be between 0 and 100.')
+            throw new Error('Percentage must be between 0 and 100.');
         }
 
-        const green = (healthPercent / 100) * 255
-        const red = 255 - ((healthPercent / 100) * 255)
-        
+        const green = (healthPercent / 100) * 255;
+        const red = 255 - (healthPercent / 100) * 255;
+
         return [red, green, 5];
     }
 
@@ -51,7 +50,9 @@ class FWIWled {
         let missingSegments = segmentKeys;
 
         if (existingSegments) {
-            missingSegments = segmentKeys.filter((segmentKey) => !existingSegments.find(({ n }) => n === segmentKey));
+            missingSegments = segmentKeys.filter(
+                (segmentKey) => !existingSegments.find(({ n }) => n === segmentKey),
+            );
         }
 
         const segmentsToCreate = missingSegments.map((segmentKey) => {
@@ -62,13 +63,13 @@ class FWIWled {
             if (this._isPre(segmentKey)) {
                 start = startLed - this.#iniLength;
                 stop = startLed;
-                color = [255, 255, 255]
+                color = [255, 255, 255];
             }
 
             if (this._isPost(segmentKey)) {
                 start = stopLed;
                 stop = stopLed + this.#iniLength;
-                color = [255, 255, 255]
+                color = [255, 255, 255];
             }
 
             return {
@@ -77,8 +78,8 @@ class FWIWled {
                 stop,
                 on: false,
                 frz: false, // TODO add check for freeze
-                col: [color, [0,0,0], [0,0,0]]
-            }
+                col: [color, [0, 0, 0], [0, 0, 0]],
+            };
         });
 
         if (!segmentsToCreate.length) {
@@ -86,23 +87,20 @@ class FWIWled {
         }
 
         const seg = await this._prepareDataForCreate(
-            segmentsToCreate.map((segment) => this.addBaseWledDataToSegment(segment))
+            segmentsToCreate.map((segment) => this.addBaseWledDataToSegment(segment)),
         );
 
-        await this._query(
-            'state',
-            {
-                method: 'POST',
-                body: {
-                    seg
-                }
-            }
-        );
+        await this._query('state', {
+            method: 'POST',
+            body: {
+                seg,
+            },
+        });
     }
 
     /**
-     * 
-     * @param {Object} segmentData 
+     *
+     * @param {Object} segmentData
      * @param {string} segmentData.name
      * @param {number} segmentData.startLed
      * @param {number} segmentData.stopLed
@@ -114,15 +112,7 @@ class FWIWled {
      * @return {Array<Object>}
      */
     async updateSegment(segmentData, batch) {
-        const {
-            name,
-            startLed,
-            stopLed,
-            isActive,
-            isGM,
-            healthPercent,
-            isOn = true
-        } = segmentData;
+        const { name, startLed, stopLed, isActive, isGM, healthPercent, isOn = true } = segmentData;
 
         const segmentKeys = isGM ? ['dm'] : this._getActorSegmentKeys(name);
 
@@ -137,30 +127,32 @@ class FWIWled {
             return;
         }
 
-        const segments = segmentKeys.map((segmentKey, index) => {
-            const id = existingSegments.find(({ n }) => segmentKey === n).id;
+        const segments = segmentKeys
+            .map((segmentKey, index) => {
+                const id = existingSegments.find(({ n }) => segmentKey === n).id;
 
-            if (index === 0) {
+                if (index === 0) {
+                    return {
+                        key: segmentKey,
+                        id,
+                        col: [color, [0, 0, 0], [0, 0, 0]],
+                        on: isOn,
+                        frz: !isOn, // TODO add check for freeze
+                    };
+                }
+
+                if (typeof isActive === 'undefined') {
+                    return;
+                }
+
                 return {
                     key: segmentKey,
                     id,
-                    col: [color, [0, 0, 0], [0, 0, 0]],
-                    on: isOn,
-                    frz: !(isOn) // TODO add check for freeze
-                }
-            }
-
-            if (typeof isActive === 'undefined') {
-                return;
-            }
-
-            return {
-                key: segmentKey,
-                id,
-                on: isOn && isActive,
-                frz: !(isOn && isActive) // TODO add check for freeze
-            }
-        }).filter(Boolean);
+                    on: isOn && isActive,
+                    frz: !(isOn && isActive), // TODO add check for freeze
+                };
+            })
+            .filter(Boolean);
 
         if (batch) {
             return segments;
@@ -181,69 +173,60 @@ class FWIWled {
         const updateSegments = await this.updateSegment(currentSegment, true);
 
         if (remainingSegments.length > 1) {
-            return await this._iterateUpdateSegments(
-                remainingSegments.slice(1),
-                [
-                    ...combinedSegments,
-                    ...(updateSegments||[])
-                ]
-            );
+            return await this._iterateUpdateSegments(remainingSegments.slice(1), [
+                ...combinedSegments,
+                ...(updateSegments || []),
+            ]);
         }
 
-        return [
-            ...combinedSegments,
-            ...(updateSegments||[])
-        ];
+        return [...combinedSegments, ...(updateSegments || [])];
     }
 
     async _updateSegments(segments) {
         let seg = Object.values(
-            segments.reduce((unique, {key, ...segment}) => {
+            segments.reduce((unique, { key, ...segment }) => {
                 if (typeof unique[key] === 'undefined' || segment.on) {
                     unique[key] = segment;
                 }
 
                 return unique;
-            }, {})
+            }, {}),
         );
 
-        return this._query(
-            'state',
-            {
-                method: 'POST',
-                body: {
-                    seg
-                }
-            }
-        )
+        return this._query('state', {
+            method: 'POST',
+            body: {
+                seg,
+            },
+        });
     }
 
     addBaseWledDataToSegment(segment) {
         return {
-            "grp": 1,
-            "spc": 0,
-            "of": 0,
-            "on": false,
-            "frz": true,
-            "bri": 255,
-            "cct": 127,
-            "set": 0,
-            "fx": 0,
-            "sx": 128,
-            "ix": 128,
-            "pal": 0,
-            "c1": 128,
-            "c2": 128,
-            "c3": 16,
-            "sel": false,
-            "rev": false,
-            "mi": false,
-            "o1": false,
-            "o2": false,
-            "o3": false,
-            "si": 0,
-            "m12": 0,
-            ...segment
+            grp: 1,
+            spc: 0,
+            of: 0,
+            on: false,
+            frz: true,
+            bri: 255,
+            cct: 127,
+            set: 0,
+            fx: 0,
+            sx: 128,
+            ix: 128,
+            pal: 0,
+            c1: 128,
+            c2: 128,
+            c3: 16,
+            sel: false,
+            rev: false,
+            mi: false,
+            o1: false,
+            o2: false,
+            o3: false,
+            si: 0,
+            m12: 0,
+            ...segment,
         };
     }
 
@@ -253,65 +236,53 @@ class FWIWled {
 
         if (!defaultSegment) {
             defaultSegment = {
-                "id": 0,
-                "start": 0,
-                "stop": 120,
-                "len": 120,
-                "grp": 1,
-                "spc": 0,
-                "of": 0,
-                "on": true,
-                "frz": false,
-                "bri": 255,
-                "cct": 127,
-                "set": 0,
-                "col": [
-                    [
-                        255,
-                        237,
-                        135
-                    ],
-                    [
-                        0,
-                        0,
-                        0
-                    ],
-                    [
-                        0,
-                        0,
-                        0
-                    ]
+                id: 0,
+                start: 0,
+                stop: 120,
+                len: 120,
+                grp: 1,
+                spc: 0,
+                of: 0,
+                on: true,
+                frz: false,
+                bri: 255,
+                cct: 127,
+                set: 0,
+                col: [
+                    [255, 237, 135],
+                    [0, 0, 0],
+                    [0, 0, 0],
                 ],
-                "fx": 0,
-                "sx": 128,
-                "ix": 128,
-                "pal": 0,
-                "c1": 128,
-                "c2": 128,
-                "c3": 16,
-                "sel": false,
-                "rev": false,
-                "mi": false,
-                "o1": false,
-                "o2": false,
-                "o3": false,
-                "si": 0,
-                "m12": 0
+                fx: 0,
+                sx: 128,
+                ix: 128,
+                pal: 0,
+                c1: 128,
+                c2: 128,
+                c3: 16,
+                sel: false,
+                rev: false,
+                mi: false,
+                o1: false,
+                o2: false,
+                o3: false,
+                si: 0,
+                m12: 0,
             };
         }
 
         const existingLength = allSegments?.length || 1;
 
         return [
-            ...(allSegments?.filter(({ id }) => id !== 0)||[]),
+            ...(allSegments?.filter(({ id }) => id !== 0) || []),
             defaultSegment,
             ...segments.map((segment, index) => {
                 return {
                     ...segment,
-                    id: existingLength + index
-                }
-            })
-        ]
+                    id: existingLength + index,
+                };
+            }),
+        ];
     }
 
     async getSegments() {
@@ -334,17 +305,14 @@ class FWIWled {
             return;
         }
 
-        const response = await fetch(
-            `${uri}/json/${endpoint}`,
-            {
-                ...options||{},
-                body: typeof options?.body === 'object' ? JSON.stringify(options.body) : options?.body,
-                headers: new Headers({
-                    ...options?.headers||{},
-                    'content-type': 'application/json'
-                }),
-            }
-        );
+        const response = await fetch(`${uri}/json/${endpoint}`, {
+            ...(options || {}),
+            body: typeof options?.body === 'object' ? JSON.stringify(options.body) : options?.body,
+            headers: new Headers({
+                ...(options?.headers || {}),
+                'content-type': 'application/json',
+            }),
+        });
 
         const data = await response.json();
 
