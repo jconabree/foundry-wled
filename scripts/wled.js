@@ -251,7 +251,6 @@ class FWIWled {
         const allSegments = await this.getSegments();
         let defaultSegment = allSegments?.find(({ id }) => id === 0);
 
-
         if (!defaultSegment) {
             defaultSegment = {
                 "id": 0,
@@ -261,9 +260,9 @@ class FWIWled {
                 "grp": 1,
                 "spc": 0,
                 "of": 0,
-                "on": false,
+                "on": true,
                 "frz": false,
-                "bri": 137,
+                "bri": 255,
                 "cct": 127,
                 "set": 0,
                 "col": [
