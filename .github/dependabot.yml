@@ -9,13 +9,33 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
-  # npm. Dev dependencies are grouped into one PR; fvtt-types bumps are ask-first (see CLAUDE.md).
+    groups:
+      actions:
+        patterns: ['*']
+  # npm. Lint-tool majors are grouped apart from routine minor/patch updates; fvtt-types bumps are ask-first (see CLAUDE.md).
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
       interval: 'weekly'
     groups:
+      # Lint/format/typing majors move together and are reviewed deliberately.
+      lint-majors:
+        patterns:
+          [
+            'eslint',
+            '@eslint/*',
+            '@eslint-community/*',
+            'typescript-eslint',
+            'typescript',
+            'prettier',
+            'globals',
+          ]
+        update-types: ['major']
+      # Low-risk rollup of minor and patch dev-dependency updates.
       dev-dependencies:
         dependency-type: 'development'
+        update-types: ['minor', 'patch']
+      # Any other major update arrives as its own PR.
     ignore:
+      # fvtt-types bumps are migration-sized; update manually (see CLAUDE.md).
       - dependency-name: '@league-of-foundry-developers/fvtt-types'
