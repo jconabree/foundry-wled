@@ -119,14 +119,37 @@ jobs:
             module.json                          \
             README.md                            \
             LICENSE                              \
-            templates                            \
             scripts/                             \
             styles/                              \
-            packs/                               \
-            language/                            \
-            lang/
+            languages/
           # Don't forget to add a backslash at the end of the line for any
           # additional files or directories!
+
+
+      # Fail the release if any path referenced by module.json is missing from
+      # the archive, since `zip` only warns about missing paths.
+      - name: Verify Archive Contents
+        run: |
+          unzip -Z1 module.zip | node -e '
+            const fs = require("fs");
+            const manifest = JSON.parse(fs.readFileSync("module.json", "utf8"));
+            const archived = fs.readFileSync(0, "utf8").split("\n").filter(Boolean);
+            const referenced = [
+              ...(manifest.esmodules ?? []),
+              ...(manifest.scripts ?? []),
+              ...(manifest.styles ?? []),
+              ...(manifest.languages ?? []).map((language) => language.path),
+              ...(manifest.packs ?? []).map((pack) => pack.path),
+            ];
+            const isArchived = (path) =>
+              archived.some((entry) => entry === path || entry.startsWith(`${path}/`));
+            const missing = referenced.filter((path) => !isArchived(path));
+            if (missing.length > 0) {
+              console.error(`Missing from module.zip: ${missing.join(", ")}`);
+              process.exit(1);
+            }
+            console.log(`All ${referenced.length} manifest paths are in module.zip`);
+          '
 
 
       # Update the GitHub release with the manifest and module archive files.
