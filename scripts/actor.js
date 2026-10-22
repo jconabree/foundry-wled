@@ -2,7 +2,7 @@ import settings from './settings.js';
 import wled from './wled.js';
 
 class FWIActor {
-    #flagKey = 'foundry-wled'
+    #flagKey = 'foundry-wled';
 
     init() {
         this.initSheet();
@@ -28,9 +28,9 @@ class FWIActor {
                         label: 'WLED Configurations',
                         class: 'wled-config',
                         icon: 'fas fa-traffic-light',
-                        onclick: this.getConfigButtonClick(app.object)
-                    }
-                )
+                        onclick: this.getConfigButtonClick(app.object),
+                    },
+                );
             });
         });
     }
@@ -59,20 +59,22 @@ class FWIActor {
                         />
                     </label>
                 `,
-                buttons: [{
-                    action: 'submit',
-                    label: 'Save',
-                    callback: (event, button, dialog) => ({
-                        start: button.form.elements['wled-actor-start'].value,
-                        stop: button.form.elements['wled-actor-stop'].value,
-                    })
-                }],
+                buttons: [
+                    {
+                        action: 'submit',
+                        label: 'Save',
+                        callback: (event, button, dialog) => ({
+                            start: button.form.elements['wled-actor-start'].value,
+                            stop: button.form.elements['wled-actor-stop'].value,
+                        }),
+                    },
+                ],
                 submit: (result) => {
                     this.setValue(actor, 'startLed', result.start);
                     this.setValue(actor, 'stopLed', result.stop);
-                }
+                },
             }).render({ force: true });
-        }
+        };
     }
 
     initSummonInfo() {
@@ -83,7 +85,7 @@ class FWIActor {
         });
     }
 
-    initCombat() {        
+    initCombat() {
         Hooks.on('updateActor', (actor, updated) => {
             this.onUpdate(actor, updated);
         });
@@ -103,7 +105,7 @@ class FWIActor {
         if (isNaN(healthPercent)) {
             return;
         }
-        
+
         if (actor.flags.dnd5e?.summonedCopy) {
             const parentActorId = this.getValue(actor, 'parentActorId');
 
@@ -114,7 +116,7 @@ class FWIActor {
                 return;
             }
 
-            segmentActor = game.actors.find(a => a.id === parentActorId);
+            segmentActor = game.actors.find((a) => a.id === parentActorId);
         }
 
         let startLed = this.getValue(segmentActor, 'startLed');
@@ -123,11 +125,12 @@ class FWIActor {
 
         if (!startLed || !stopLed) {
             const nonPlayerUsers = game.users
-                    .filter(({ name }) => ['Gamemaster', 'Table'].includes(name))
-                    .map(({ _id }) => _id);
-            const hasNonGmOwner = Object.entries(segmentActor.ownership)
-                .some(([uuid, level]) => level === 3 && !nonPlayerUsers.includes(uuid));
-            
+                .filter(({ name }) => ['Gamemaster', 'Table'].includes(name))
+                .map(({ _id }) => _id);
+            const hasNonGmOwner = Object.entries(segmentActor.ownership).some(
+                ([uuid, level]) => level === 3 && !nonPlayerUsers.includes(uuid),
+            );
+
             if (!hasNonGmOwner) {
                 startLed = settings.getValue('gm-start');
                 stopLed = settings.getValue('gm-end');
@@ -148,7 +151,7 @@ class FWIActor {
             startLed,
             stopLed,
             healthPercent,
-            isGM
+            isGM,
         };
     }
 
@@ -170,7 +173,7 @@ class FWIActor {
             return;
         }
 
-        wled.updateSegment(actorSegment)
+        wled.updateSegment(actorSegment);
     }
 
     setValue(entity, key, value) {
