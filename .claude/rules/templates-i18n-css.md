@@ -5,7 +5,7 @@ paths:
   - "**/languages/**"
   - "**/*.css"
 ---
-<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Staging copy: foundry14/shared-claude/. Change all copies together. -->
+<!-- SYNCED COPY: identical in foundry-getting-lost, foundry-rotate-scene, foundry-wled. Change all copies together. -->
 # Templates, i18n, and CSS rules
 
 - Every user-facing string goes through `game.i18n` (`localize` / `format`). No hard-coded UI text.
