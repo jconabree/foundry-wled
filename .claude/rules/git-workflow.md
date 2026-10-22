@@ -15,6 +15,12 @@
   - `.claude/rules/release-manifest.md`
   - `.claude/rules/templates-i18n-css.md`
   - `.claude/settings.json`
+  - `.editorconfig`
+  - `.prettierrc.json`
+  - `.prettierignore`
+  - `eslint.config.mjs`
+  - `.github/workflows/ci.yml`
+  - `.github/dependabot.yml`
 - `.claude/settings.json` is synced even though JSON cannot carry the sync comment.
 - Change synced files identically in all three repos in the same session. Verify with `diff`.
 - Personal permission overrides go in `.claude/settings.local.json` (uncommitted), never in `.claude/settings.json`.

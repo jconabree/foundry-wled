@@ -4,15 +4,15 @@ Shared standards live in `.claude/rules/` (loaded automatically); this file cove
 
 ## What this is
 
-Foundry VTT module (`id: foundry-wled`) that drives a real-world WLED LED strip from play: combat start, turn, round and end set segment lighting, and an actor's HP changes recolour its segment. Plain ES modules, no build, no package manifest, no tests. Targets Foundry v13 minimum / v14 verified and dnd5e 5.3.3+ / 6.x (dnd5e 6.x behaviour is partly unverified; see Foundry integration).
+Foundry VTT module (`id: foundry-wled`) that drives a real-world WLED LED strip from play: combat start, turn, round and end set segment lighting, and an actor's HP changes recolour its segment. Plain ES modules, no build, no tests. `package.json` holds lint and format tooling only (devDependencies, no runtime dependencies). Targets Foundry v13 minimum / v14 verified and dnd5e 5.3.3+ / 6.x (dnd5e 6.x behaviour is partly unverified; see Foundry integration).
 
 ## Commands
 
-No build and no npm. Static checks only (JSON validity and syntax):
+No build. Tooling is ESLint and Prettier (Node 24):
 
-- `node -e "JSON.parse(require('fs').readFileSync('module.json','utf8'))"`
-- `node -e "JSON.parse(require('fs').readFileSync('languages/en.json','utf8'))"`
-- `for f in scripts/*.js scripts/lib/*.js; do node --check "$f" || exit 1; done`
+- `npm ci`: install dev tooling.
+- `npm run check`: lint, format check, and JSON validity (`module.json`, `languages/en.json`). Must exit 0.
+- `npm run lint:fix` and `npm run format`: apply fixes.
 - `git diff --stat` before committing
 
 ## Layout
@@ -57,9 +57,8 @@ Per the strict upgrade rule, fix these in a separate preceding commit before cha
 
 Static (report actual output):
 
-1. The two `node -e` JSON parse commands above (`module.json`, `languages/en.json`) both exit 0.
-2. `for f in scripts/*.js scripts/lib/*.js; do node --check "$f" || exit 1; done`
-3. `git status --porcelain` shows only intended files.
+1. `npm run check` exits 0.
+2. `git status --porcelain` shows only intended files.
 
 Manual in Foundry (list them for the user; unverified until the user confirms):
 
