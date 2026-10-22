@@ -47,7 +47,7 @@ class FWIEncounter {
                 };
             })
             .filter(Boolean)
-            .reduce((unique, segment, index) => {
+            .reduce((unique, segment) => {
                 const existingIndex = unique.findIndex(({ name }) => name === segment.name);
                 if (existingIndex === -1) {
                     unique.push(segment);
