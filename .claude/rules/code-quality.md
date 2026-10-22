@@ -5,6 +5,10 @@
 - Every `async`/`await` path handles errors (`try`/`catch` or explicit rejection handling). No floating promises.
 - No stray `console.*`. Log through the module logger, with messages prefixed by the module id.
 - TypeScript repos: `strict` stays on. No `any` without a comment justifying it. `npx tsc --noEmit` must pass.
+- Run `npm run check` before every commit.
+- Never add an `eslint-disable` without a `-- reason`.
+- `-- legacy:` suppressions are removed under the strict upgrade rule when their file is touched.
+- Never weaken lint, format, or CI configuration without asking the user.
 - Small single-responsibility modules and functions. Descriptive names.
 - No dead code, commented-out code, or unused exports/imports.
 - No `TODO` without an issue reference (`TODO(#123)`).
