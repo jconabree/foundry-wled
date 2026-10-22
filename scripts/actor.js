@@ -36,7 +36,7 @@ class FWIActor {
     }
 
     getConfigButtonClick(actor) {
-        return (...clickData) => {
+        return () => {
             new foundry.applications.api.DialogV2({
                 window: { title: `${actor.name} WLED Configuration` },
                 content: `
@@ -63,7 +63,7 @@ class FWIActor {
                     {
                         action: 'submit',
                         label: 'Save',
-                        callback: (event, button, dialog) => ({
+                        callback: (event, button) => ({
                             start: button.form.elements['wled-actor-start'].value,
                             stop: button.form.elements['wled-actor-stop'].value,
                         }),
@@ -111,6 +111,7 @@ class FWIActor {
 
             // Summoned but no attachment
             if (!parentActorId) {
+                // eslint-disable-next-line no-console -- legacy: see CLAUDE.md "Known legacy patterns"
                 console.warn('Summoned creature has no parent actor');
 
                 return;

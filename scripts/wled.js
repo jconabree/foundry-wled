@@ -122,6 +122,7 @@ class FWIWled {
         const existingSegments = await this.getSegments();
 
         if (!existingSegments) {
+            // eslint-disable-next-line no-console -- legacy: see CLAUDE.md "Known legacy patterns"
             console.warn('Failed to create missing segments');
 
             return;
@@ -183,7 +184,7 @@ class FWIWled {
     }
 
     async _updateSegments(segments) {
-        let seg = Object.values(
+        const seg = Object.values(
             segments.reduce((unique, { key, ...segment }) => {
                 if (typeof unique[key] === 'undefined' || segment.on) {
                     unique[key] = segment;
@@ -300,6 +301,7 @@ class FWIWled {
         const uri = settings.getValue('uri')?.replace(/\/$/, '');
 
         if (!uri) {
+            // eslint-disable-next-line no-console -- legacy: see CLAUDE.md "Known legacy patterns"
             console.warn('Configure WLED address');
 
             return;
